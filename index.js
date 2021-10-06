@@ -5,7 +5,7 @@ let app = express()
 let PORT = process.env.PORT
 
 app.get("/", function(req, res){
-    res.send("Helloooooo Heroku App")
+    res.send("Wuzuuuuuuuuup")
 })
 
 app.listen(PORT, function(){
