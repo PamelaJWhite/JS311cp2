@@ -30,7 +30,7 @@ router.post("/createUser", function(req, res){
     //     }
     // })
 })
-router.get("./stories", function(req, res){
+router.get("/stories", function(req, res){
     console.log("in function to list stories for admin listStories()")
     res.json("this will be a list of stories ever created")
 })
