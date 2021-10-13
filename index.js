@@ -36,7 +36,7 @@ app.get("/mysql", function(req, res){
 //should this be here? or in a routes folder?
 app.get("/", function(req, res){
     console.log("What's going on?")
-    res.send("Main page")
+    res.send("WOW")
 })
  
 app.listen(PORT, function(){
