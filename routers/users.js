@@ -13,10 +13,27 @@ const router = express.Router()
 controllers = require("../controllers/users")
 
 //establish routes
+// POST /login
+// Login
+//no authorizations (yet?)
+router.post("/login", controllers.login)
 
-//login, no authorizations
-router.post("./login", function(req, res){
-    console.log("You made it to login()")
-})
+//I haven't checked any of these:
+//not sure about the routes!
+
+// //user chooses stories to add to their myStories list
+// router.post("/myStories/add/:id", function(req, res){
+//     console.log("in user function chooseStory()")
+//     res.json("you made it to chooseStory()")
+//     //given the story id
+//     //adds a story to a specific user's story list
+// })
+
+// //users see all the stories they have chosen
+// router.get("/stories/myStories", function(req, res){
+//     console.log("in function to list stories for users myStories()")
+//     res.json("this will be a list of stories the user has chosen")
+// })
+
 //export router object so routes can be used elsewhere in the code
 module.exports = router

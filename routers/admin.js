@@ -13,27 +13,54 @@ const router = express.Router()
 controllers = require("../controllers/admin")
 
 //establish routes
-router.post("/createUser", function(req, res){
-    console.log("Hey there, createUser()")
-    res.json("creating a user is so much fun!")
-//     let sql = "INSERT INTO users(username, password_hash, role) values(?, ?, ?);"
-//     db.query(sql, [username, passwordHash, 'user'], (err, rows)=> {
-//         //if the insert query returned an error, we log the error
-//         //and return a failed message back
-//         if(err){
-//             console.error("failed to add user", err)
-//             res.status(500).send("failed to add user")
-//         } else {
-//             //if the inster statement ran without an error, then the user was created
-//             console.log("user created? for real?")
-//             res.send("user created")
-    //     }
-    // })
-})
-router.get("/stories", function(req, res){
-    console.log("in function to list stories for admin listStories()")
-    res.json("this will be a list of stories ever created")
-})
+router.post("/createUser", controllers.createUser)
+
+
+//------------- STORIES create, update, delete, get stories ----------------------
+router.post("/stories", controllers.createStory)
+
+
+router.put("/stories/:story_id", controllers.modifyStory)
+
+
+router.delete("/stories/:story_id", controllers.deleteStory)
+
+
+router.get("/stories", controllers.listStoriesAdmin) 
+
+
+//------------ STORY SECTIONS create, update, delete ----------------
+router.post("/stories/:story_id/sections", controllers.createStorySection)
+
+
+router.put("/stories/sections/:section_id", controllers.modifyStorySection)
+
+
+router.delete("/stories/sections/:section_id", controllers.deleteStorySection)
+
+
+//---------------------- OPTIONS create, update, delete ---------------
+
+router.post("/stories/sections/:section_id/options", controllers.createOption)
+
+
+router.put("/stories/sections/options/:option_id", controllers.modifyOption)
+
+
+router.delete("/stories/sections/options/:option_id", controllers.deleteOption)
+
+//------------- SEE A WHOLE STORY -------
+//parameters needed labeled with 
+//grab the title from Stories table by the story_id
+//create an object with the "title" as the first key and the title as its value??
+//grab the start_story_section_id from the Stories table by the story_id
+//save this somewhere? in the object that holds the title?
+//grab the story_section_content from the StorySections table where the start_story_section_id from Stories table matches the story_section_id from StorySections table
+//grab all the option_content rows from SectionOptions table where the story_section_id from SectionOptions matches the story_section_id from StorySections
+//so far, you'd likely have title, story section, and three(ish) options
+//save those option_content rows in an array
+//for each in option_content in the array grab the resulting_story_sections_id from SectionOptions table where the 
+
 
 //export router object so routes can be used elsewhere in the code
 module.exports = router
