@@ -6,48 +6,51 @@ const express = require("express")
 const router = express.Router()
 
 //import middleware
-//use later
-// let auth = require("../middleware/auth")
+let auth = require("../middleware/auth")
 
 //import controllers (for admin)
 controllers = require("../controllers/admin")
 
 //establish routes
-router.post("/createUser", controllers.createUser)
+router.post("/createUser", [auth.checkJwt, auth.isAdmin], controllers.createUser)
 
 
 //------------- STORIES create, update, delete, get stories ----------------------
-router.post("/stories", controllers.createStory)
+router.post("/stories", [auth.checkJwt, auth.isAdmin], controllers.createStory)
 
 
-router.put("/stories/:story_id", controllers.modifyStory)
+router.put("/stories/:story_id", [auth.checkJwt, auth.isAdmin], controllers.modifyStory)
 
 
-router.delete("/stories/:story_id", controllers.deleteStory)
+router.delete("/stories/:story_id", [auth.checkJwt, auth.isAdmin], controllers.deleteStory)
 
 
-router.get("/stories", controllers.listStoriesAdmin) 
+router.get("/stories", [auth.checkJwt, auth.isAdmin], controllers.listStoriesAdmin) 
 
 
 //------------ STORY SECTIONS create, update, delete ----------------
-router.post("/stories/:story_id/sections", controllers.createStorySection)
+router.post("/stories/:story_id/sections", [auth.checkJwt, auth.isAdmin], controllers.createStorySection)
 
 
-router.put("/stories/sections/:section_id", controllers.modifyStorySection)
+router.put("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], controllers.modifyStorySection)
+
+//add route to assign first story section to a title/ story
 
 
-router.delete("/stories/sections/:section_id", controllers.deleteStorySection)
+router.delete("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], controllers.deleteStorySection)
 
 
 //---------------------- OPTIONS create, update, delete ---------------
 
-router.post("/stories/sections/:section_id/options", controllers.createOption)
+router.post("/stories/sections/:section_id/options", [auth.checkJwt, auth.isAdmin], controllers.createOption)
+
+//route to link an option to its resulting story section 
+//cannot be done during original creation, because the next story section may not be created yet
+
+router.put("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.modifyOption)
 
 
-router.put("/stories/sections/options/:option_id", controllers.modifyOption)
-
-
-router.delete("/stories/sections/options/:option_id", controllers.deleteOption)
+router.delete("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.deleteOption)
 
 //------------- SEE A WHOLE STORY -------
 //parameters needed labeled with 

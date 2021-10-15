@@ -8,21 +8,43 @@ const jwt = require("jsonwebtoken")
 
 const createUser = function(req, res){
     console.log("Hey there, createUser()")
-    res.json("creating a user is so much fun!")
-//     let sql = "INSERT INTO users(username, password_hash, role) values(?, ?, ?);"
-//     db.query(sql, [username, passwordHash, 'user'], (err, rows)=> {
-//         //if the insert query returned an error, we log the error
-//         //and return a failed message back
-//         if(err){
-//             console.error("failed to add user", err)
-//             res.status(500).send("failed to add user")
-//         } else {
-//             //if the inster statement ran without an error, then the user was created
-//             console.log("user created? for real?")
-//             res.send("user created")
-    //     }
-    // })
+
+    //will need: user_name, password, confirmPassword, email, and role to create a user
+    let username = req.body.username
+    let password = req.body.password
+    let confirmPassword = req.body.confirmPassword
+    let email = req.body.email
+    let role = req.body.role
+
+     //make sure the passwords are the same
+     if(password !== confirmPassword){
+        return res.status(400).send("Passwords do not match, you dolt")
+    } else {
+        console.log("passwords match!")
+    }
+
+    //create and store the hashed password from the password provided by the user
+    let passwordHash = bcrypt.hashSync(password, 10)
+
+    //add four things into the user table, values set to ?
+    let sql = "INSERT INTO Users(user_name, password_hash, email, role) values(?, ?, ?, ?);"
+
+    //array as second parameter = the four ? values
+    db.query(sql, [username, passwordHash, email, role], (err, rows)=> {
+        //if the insert query returned an error, we log the error
+        //and return a failed message back
+
+        if(err){
+            console.error("failed to add user", err)
+            res.status(500).send("failed to add user")
+        } else {
+            //if the inster statement ran without an error, then the user was created
+            console.log("user created")
+            res.json(rows);
+        }
+    })
 }
+
 
 
 //------------------ STORIES functions ------------------------------
@@ -32,9 +54,13 @@ const createStory = function(req, res){
     //the story_id will be autocreated/ incremented
     //grab the title that from req body
     let title = req.body.title
-    console.log(title)
-    
-    let sql = `INSERT INTO stories(title) values("${title}")`
+    console.log("Title received: ", title)
+
+    if(!title){
+        return res.status(400).send("Need a title to proceed")
+    }
+
+    let sql = `INSERT INTO stories(title) values(?)`
     //Need to disallow where title already exists
     console.log(sql)
     db.query(sql, title, (err, rows)=> {
@@ -55,17 +81,17 @@ const modifyStory = function(req, res){
     console.log("function to update a story that has already been created modifyStory()")
      //grab the title that from req body
      let title = req.body.title
-     console.log(title)
+     console.log("Want to change the title to: ", title)
      //need to grab the story_id from the parameters?
      let story_id = req.params.story_id
      console.log(story_id)
 
-    let sql = `UPDATE stories SET title="${title}" WHERE story_id = ${story_id};`
+    let sql = `UPDATE stories SET title= ? WHERE story_id = ?;`
     //Need to disallow where title already exists
-     console.log(sql)
-     db.query(sql, function(err, rows) {
-     //     //if the insert query returned an error, we log the error
-     //     //and return a failed message back
+    //couldn't quickly figure out how to modify a column :/
+    
+     db.query(sql, [title, story_id], function(err, rows) {
+
          if(err){
              console.error("failed to update story", err)
              res.status(500).send("failed to update story")
@@ -82,17 +108,16 @@ const deleteStory = function(req, res){
     let story_id = req.params.story_id
      console.log(story_id)
 
-    let sql = `DELETE FROM stories WHERE story_id = ${story_id};`
-    //but what about the story sections and options attached to this story???
+    let sql = `DELETE FROM stories WHERE story_id = ?;`
+    //but what about the story sections and options attached to this story?
+    //this just deletes the title
+    //and it can only delete a title if there is no content attached to it (i.e., if it is not a parent)
      console.log(sql)
-     db.query(sql, function(err, rows) {
-     //     //if the insert query returned an error, we log the error
-     //     //and return a failed message back
+     db.query(sql, story_id, function(err, rows) {
          if(err){
              console.error("failed to delete story", err)
              res.status(500).send("failed to update story")
          } else {
-             //if the insert statement ran without an error, then the user was created
              console.log("deleted story:", rows)
              res.json(rows);
          }
@@ -102,17 +127,13 @@ const deleteStory = function(req, res){
 const listStoriesAdmin = function(req, res){
     console.log("in function to list stories for admin listStoriesAdmin()")
     let sql = `SELECT * FROM stories`
-    //but what about the story sections and options attached to this story???
-     console.log(sql)
+    
      db.query(sql, function(err, rows) {
-     //     //if the insert query returned an error, we log the error
-     //     //and return a failed message back
          if(err){
-             console.error("failed to delete story", err)
-             res.status(500).send("failed to update story")
+             console.error("failed to get story titles", err)
+             res.status(500).send("failed to get story titles")
          } else {
-             //if the insert statement ran without an error, then the user was created
-             console.log("deleted story:", rows)
+             console.log("here are the stories", rows)
              res.json(rows);
          }
      })
@@ -125,9 +146,9 @@ const createStorySection = function(req, res){
     console.log("in function to create a story section createStorySection()")
     let story_section_content = req.body.story_section_content
     let story_id = req.params.story_id
-    let sql = `INSERT INTO storysections(story_section_content, story_id) VALUES("${story_section_content}", ${story_id})`
+    let sql = `INSERT INTO storysections(story_section_content, story_id) VALUES(?, ?)`
     //somehow need to identify and assign the first story section. This function or a separate route? I think the latter
-    db.query(sql, function(err, rows) {
+    db.query(sql, [story_section_content, story_id], function(err, rows) {
         //     //if the insert query returned an error, we log the error
         //     //and return a failed message back
             if(err){
@@ -145,17 +166,13 @@ const modifyStorySection = function(req, res){
     console.log("in function to update a story section modifyStorySection()")
     let story_section_content = req.body.story_section_content
     let section_id = req.params.section_id
-    let sql = `UPDATE storysections SET story_section_content ="${story_section_content}" WHERE story_section_id = ${section_id};`
-    //also, I should change the title of the column to be section_id,not story_section_id or vice versa
-    //somehow need to identify and assign the first story section. This function or a separate route? I think the latter
-    db.query(sql, function(err, rows) {
-        //     //if the insert query returned an error, we log the error
-        //     //and return a failed message back
+    let sql = `UPDATE storysections SET story_section_content = ? WHERE story_section_id = ? ;`
+   
+     db.query(sql, [story_section_content, section_id], function(err, rows) {
             if(err){
                 console.error("failed to add story section", err)
                 res.status(500).send("failed to add story section")
             } else {
-                //if the insert statement ran without an error, then the user was created
                 console.log("added story section", rows)
                 res.json(rows);
             }
@@ -178,16 +195,13 @@ const createOption = function(req, res){
     console.log("in function to create an option createOption()")
     let option_content = req.body.option_content
     let section_id = req.params.section_id
-    let sql = `INSERT INTO options(option_content, story_section_id) VALUES("${option_content}", ${section_id})`
-    //somehow need to identify and assign the first story section. This function or a separate route? I think the latter
-    db.query(sql, function(err, rows) {
-        //     //if the insert query returned an error, we log the error
-        //     //and return a failed message back
+    let sql = `INSERT INTO sectionoptions(option_content, story_section_id) VALUES(? , ? )`
+   
+    db.query(sql, [option_content, section_id], function(err, rows) {
             if(err){
                 console.error("failed to add option", err)
                 res.status(500).send("failed to add option")
             } else {
-                //if the insert statement ran without an error, then the user was created
                 console.log("added option", rows)
                 res.json(rows);
             }
@@ -199,8 +213,8 @@ const modifyOption = function(req, res){
     console.log("in function to update a story option modifyOption()")
     let option_content = req.body.option_content
     let option_id = req.params.option_id
-    let sql = `UPDATE sectionoptions SET option_content ="${option_content}" WHERE option_id = ${option_id};`
-    db.query(sql, function(err, rows) {
+    let sql = `UPDATE sectionoptions SET option_content =? WHERE option_id =?;`
+    db.query(sql, [option_content, option_id], function(err, rows) {
             if(err){
                 console.error("failed to modify option", err)
                 res.status(500).send("failed to modify option")
@@ -215,12 +229,11 @@ const modifyOption = function(req, res){
 const deleteOption = function(req, res){
     console.log("in function to delete a story option deleteOption()")
     let option_id = req.params.option_id;
-    let sql = `DELETE FROM sectionoptions WHERE option_id = ${option_id};`
-    //but what about the story sections and options attached to this story???
+    let sql = `DELETE FROM sectionoptions WHERE option_id = ?;`
+    //but what about the story sections and options attached to this story?
+    //only delete if it does NOT have a resulting story section attached?
      console.log(sql)
-     db.query(sql, function(err, rows) {
-     //     //if the insert query returned an error, we log the error
-     //     //and return a failed message back
+     db.query(sql, option_id, function(err, rows) {
          if(err){
              console.error("failed to delete option", err)
              res.status(500).send("failed to delete option")
