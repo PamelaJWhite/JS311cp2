@@ -29,12 +29,15 @@ router.get("/stories", [auth.checkJwt, auth.isAdmin], controllers.listStoriesAdm
 
 
 //------------ STORY SECTIONS create, update, delete ----------------
+
+//create a story section
 router.post("/stories/:story_id/sections", [auth.checkJwt, auth.isAdmin], controllers.createStorySection)
 
-
+//modify a story section
 router.put("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], controllers.modifyStorySection)
 
 //add route to assign first story section to a title/ story
+router.put("/stories/:story_id/connectStart/:section_id", [auth.checkJwt, auth.isAdmin], controllers.connectStartStorySection)
 
 
 router.delete("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], controllers.deleteStorySection)
@@ -44,10 +47,12 @@ router.delete("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], co
 
 router.post("/stories/sections/:section_id/options", [auth.checkJwt, auth.isAdmin], controllers.createOption)
 
-//route to link an option to its resulting story section 
-//cannot be done during original creation, because the next story section may not be created yet
 
 router.put("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.modifyOption)
+
+//route to link an option to its resulting story section 
+//cannot be done during original creation, because the next story section may not be created yet
+router.put("/stories/:section_id/connectOption/:option_id", [auth.checkJwt, auth.isAdmin], controllers.connectOption)
 
 
 router.delete("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.deleteOption)

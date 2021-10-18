@@ -156,6 +156,7 @@ const createStorySection = function(req, res){
                 res.status(500).send("failed to add story section")
             } else {
                 //if the insert statement ran without an error, then the user was created
+                //there's a key called insertId in the rows object that's returned that I think I'd like to get here
                 console.log("added story section", rows)
                 res.json(rows);
             }
@@ -180,6 +181,23 @@ const modifyStorySection = function(req, res){
 
 }
 
+//after creating the first section of a story
+//link it to the story_id in the stories
+const connectStartStorySection = function(req, res){
+    console.log("connect the start story section to the story connectStartStorySection()")
+    let storyId = req.params.story_id
+    let sectionId = req.params.section_id
+    let sql = `UPDATE stories SET start_story_section_id = ? WHERE story_id = ?`
+    db.query(sql, [sectionId, storyId], function(err, rows){
+        if(err){
+        console.error("failed to connect first story section", err)
+        res.status(500).send("failed to connect start story section")
+        } else {
+        console.log("connected story section", rows)
+        res.json(rows);
+        }
+    })
+}
 const deleteStorySection = function(req, res){
     console.log("in function to delete a story section deleteStorySection()")
     //I'm really concerned about this, because if you delete a story section, it will mess up the whole story
@@ -226,6 +244,22 @@ const modifyOption = function(req, res){
 
 }
 
+const connectOption = function(req, res){
+    console.log("in function to connect a resulting story section to an option")
+    let storySection = req.params.section_id
+    let option = req.params.option_id
+    let sql = `UPDATE sectionoptions SET resulting_story_section_id = ? WHERE option_id = ?`
+    db.query(sql, [storySection, option], function(err, rows){
+        if(err){
+            console.error("failed to link option to story section", err)
+            res.status(500).send("failed to option to story section")
+        }else{
+            console.log("connected story section id to option")
+            res.json(rows)
+        }
+    })
+}
+
 const deleteOption = function(req, res){
     console.log("in function to delete a story option deleteOption()")
     let option_id = req.params.option_id;
@@ -255,8 +289,10 @@ module.exports = {
     listStoriesAdmin,
     createStorySection,
     modifyStorySection,
+    connectStartStorySection,
     deleteStorySection,
     createOption,
     modifyOption,
+    connectOption,
     deleteOption
 } 
