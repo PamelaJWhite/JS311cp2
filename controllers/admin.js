@@ -279,6 +279,12 @@ const deleteOption = function(req, res){
      })
 }
 
+let seeWholeStory = function(req, res){
+    console.log("in seeWholeStory()")
+    //see notes on routers/admin.js and notes.js
+    //for now, 200 status just to show that the route is working 
+    res.sendStatus(200)
+}
 
 //export
 module.exports = {
@@ -294,5 +300,6 @@ module.exports = {
     createOption,
     modifyOption,
     connectOption,
-    deleteOption
+    deleteOption, 
+    seeWholeStory
 } 

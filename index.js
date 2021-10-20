@@ -19,8 +19,7 @@ let adminRoutes = require("./routers/admin")
 //and use it
 app.use(adminRoutes)
 
-//I think this was just to test if the db was connectected
-//probably can delete
+//testing connection
 app.get("/mysql", function(req, res){
     //select now() is a mysql func that gives time and date
     mysql.query("select now()", function(error, rows){
@@ -33,7 +32,6 @@ app.get("/mysql", function(req, res){
     })
 })
 //this shows my main page
-//should this be here? or in a routes folder?
 app.get("/", function(req, res){
     console.log("What's going on?")
     res.send("WOW")
