@@ -2,6 +2,11 @@
 const express = require("express")
 //use express
 
+//I added these three lines to try to fix the cors problem
+var cors = require('cors')
+var app = express()
+app.use(cors())
+
 //create a router object to handle the routes
 const router = express.Router()
 

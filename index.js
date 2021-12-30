@@ -3,6 +3,10 @@ let app = express()
 // enable the app to parse JSON bodies in post/put
 app.use(express.json())
 
+//I added these two lines to try to fix the cors problem
+let cors = require('cors')
+app.use(cors())
+
 require("dotenv").config()
 
 let mysql = require("./db/db")
@@ -34,7 +38,7 @@ app.get("/mysql", function(req, res){
 //this shows my main page
 app.get("/", function(req, res){
     console.log("What's going on?")
-    res.send("Things that make you go hmmm")
+    res.send("i'm running out of things to say")
 })
  
 app.listen(PORT, function(){
