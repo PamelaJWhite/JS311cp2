@@ -34,7 +34,7 @@ app.get("/mysql", function(req, res){
 //this shows my main page
 app.get("/", function(req, res){
     console.log("What's going on?")
-    res.send("WOW")
+    res.send("Things that make you go hmmm")
 })
  
 app.listen(PORT, function(){
