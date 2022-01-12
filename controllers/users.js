@@ -93,8 +93,8 @@ let login = function(req, res){
 // Any user can see this list as long as they’re logged in
 let getAllStories = function(req, res){
     console.log("user seeAllStories()")
-    //get all the titles from the stories table
-    let sql = `SELECT title FROM stories`
+    //get all the titles and story_ids from the stories table
+    let sql = `SELECT * FROM stories`
     db.query(sql, function(err, rows) {
         if(err){
             console.error("failed to get all stories", err)
