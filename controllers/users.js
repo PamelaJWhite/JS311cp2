@@ -160,7 +160,7 @@ let deleteFromList = function(req, res){
 
     //grab the user_story_id from the params
     let userStoryId = req.params.user_story_id
-    let sql = "SELECT * FROM userStory WHERE user_story_id = ?"
+    let sql = "DELETE FROM userStory WHERE user_story_id = ?"
 
     db.query(sql, userStoryId, function(err, rows){
         if(err){
