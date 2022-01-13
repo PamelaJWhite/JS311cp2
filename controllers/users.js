@@ -292,7 +292,7 @@ let readStorySection = function(req, res){
             } )
             // save just the row; take it out of the returned array
             // and show just the value (i.e., the content)
-            let section =  rows[0].story_section_content
+            let section =  rows[0]
                 console.log(section)
                 res.json(section)
             }
