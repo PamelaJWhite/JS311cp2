@@ -41,9 +41,9 @@ router.delete("/myStories/delete/:user_story_id", auth.checkJwt, controllers.del
 //read a story section and add it to CompleteStory
 router.post("/myStories/read/:user_story_id", auth.checkJwt, controllers.readStorySection)
 
-// GET /myStories/options/:story_sectin_id
+// POST /myStories/options/:story_sectin_id
 // see all options
-router.get("/myStories/options/:story_section_id", auth.checkJwt, controllers.seeOptions)
+router.post("/myStories/options/:story_section_id", auth.checkJwt, controllers.seeOptions)
 
 // POST /myStories/options/user_story_id/:option_id
 //add chosen option to userstory table 
