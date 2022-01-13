@@ -184,7 +184,7 @@ let deleteFromList = function(req, res){
 // Add it to the CompleteStory table
 // The database is getting updated as the user reads the story and makes choices
 // Read the story section
-let readStorySection = function(req, res){
+let readFirstStorySection = function(req, res){
     //read a story section and add it to the CompleteStory table
     console.log("user readStorySection()")
 
@@ -371,7 +371,7 @@ let seeCompleteStory = function(req, res){
      addToList,
      seeMyList,
      deleteFromList,
-     readStorySection,
+     readFirstStorySection,
      seeOptions,
      chooseOption,
      seeCompleteStory

@@ -17,7 +17,7 @@ const createUser = function(req, res){
     let role = req.body.role
 
      //make sure the passwords are the same
-     if(password !== confirmPassword){
+    if(password !== confirmPassword){
         return res.status(400).send("Passwords do not match, you dolt")
     } else {
         console.log("passwords match!")
@@ -214,7 +214,7 @@ const createOption = function(req, res){
     let option_content = req.body.option_content
     let section_id = req.params.section_id
     let sql = `INSERT INTO sectionoptions(option_content, story_section_id) VALUES(? , ? )`
-   
+
     db.query(sql, [option_content, section_id], function(err, rows) {
             if(err){
                 console.error("failed to add option", err)
