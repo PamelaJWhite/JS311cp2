@@ -348,7 +348,7 @@ let seeOptions = function(req, res){
     let sectionId = req.params.story_section_id
 
     //grab the option_content  that match that sectionId
-    let sql = `SELECT option_content FROM sectionoptions WHERE story_section_id = ?`
+    let sql = `SELECT option_content, option_id, resulting_story_section_id FROM sectionoptions WHERE story_section_id = ?`
     db.query(sql, sectionId, function(err, rows){
         if(err){
             console.error("couldn't get options ", err)
