@@ -37,9 +37,12 @@ router.get("/myStories/list/:user_id", auth.checkJwt, controllers.seeMyList)
 //Delete a story title from a user's list
 router.delete("/myStories/delete/:user_story_id", auth.checkJwt, controllers.deleteFromList)
 
-// POST /myStories/read/user_story_id
-//read a story section and add it to CompleteStory
+// POST /myStories/readFirst/user_story_id
+//read the first story section and add it to CompleteStory
 router.post("/myStories/readFirst/:user_story_id", auth.checkJwt, controllers.readFirstStorySection)
+
+//POST /myStories/read/:user_story_id/:resulting_story_sectionId
+router.post("/myStories/read/:user_story_id/:resulting_story_section_id", auth.checkJwt, controllers.readNextSection)
 
 // POST /myStories/options/:story_sectin_id
 // see all options

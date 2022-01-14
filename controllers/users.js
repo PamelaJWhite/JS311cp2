@@ -188,11 +188,7 @@ let readFirstStorySection = function(req, res){
     //read a story section and add it to the CompleteStory table
     console.log("user readStorySection()")
 
-    //this function will need a query param
-    //either user_story_id 
-    //or resulting_story_section_id (which is connected to the option)
-
-    //grab the user_story_id from path params if it's there
+    //grab the user_story_id from path params 
     let userStoryId = req.params.user_story_id;
     console.log("path params had this user_story_id: ", userStoryId)
 
@@ -272,7 +268,7 @@ let readFirstStorySection = function(req, res){
                 console.log("story section id to add to completestory: ", storySectionId)
 
                 //and add it to CompleteStory table 
-                let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, 0)`
+                let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
                 db.query(sqlCompleteStory, [userStoryId, storySectionId], function(req, res){
             if(err){
                 console.error("couldn't insert new completestory row: ", err)
@@ -298,6 +294,50 @@ let readFirstStorySection = function(req, res){
             }
         } )
     }
+}
+
+let readNextSection = function(req, res){
+    console.log("in readNextSection()")
+    //grab the user_story_id from path params 
+    let userStoryId = req.params.user_story_id;
+
+     //grab the resulting_story_section_id from the path params
+    let resultingStorySection = req.params.resulting_story_section_id
+    console.log("path params had this resulting_story_section ", resultingStorySection)
+
+    //JOIN sectionoptions and storysections tables
+    //on the column resultingstorysection in sectionoptions matches the column storysectionid in storysections
+    //select columns: sectionoptions.resulting_story_section, storysections.story_section_id, storysections.story_section_content
+    //and i still need the user_story_id to   add to the completestory table
+    let sql = 
+    `SELECT 
+    sectionoptions.resulting_story_section_id,
+    storysections.story_section_id,
+    storysections.story_section_content
+    FROM sectionoptions
+    JOIN storysections ON sectionoptions.resulting_story_section_id = storysections.story_section_id
+    WHERE resulting_story_section_id = ?`
+    
+    db.query(sql, resultingStorySection, function(err, rows){
+        if(err){
+            console.error("couldn't join sectionoptions and storysections tables", err)
+            res.status(500).send("couldn't join sectionoptions and storysections tables")
+        }else{
+            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
+            db.query(sqlCompleteStory, [userStoryId, resultingStorySection], function(err, rows){
+                if(err){
+                    console.error("couldn't add those rows to completestory", err)
+                    res.status(500).send("couldn't add rows to completestory")
+                }else{
+                    console.log("added the row to complete table, now you can read it")
+                }
+            })
+        //return the section here
+        let section =  rows[0].story_section_content
+        console.log("read this: ", section)
+        res.status(400).json(section)  
+        }
+    } )
 }
 
 let seeOptions = function(req, res){
@@ -351,7 +391,7 @@ let chooseOption = function(req, res){
                 res.status(500).send("couldn't add option to completestory")
             }else{
                 console.log("rows in addOption() db query: ", rows)
-                 res.status(200).send("added option to complete story")
+                res.status(200).send("added option to complete story")
             }
         })
         
@@ -365,14 +405,15 @@ let seeCompleteStory = function(req, res){
 }
 
  //export controllers
- module.exports = {
-     login,
-     getAllStories,
-     addToList,
-     seeMyList,
-     deleteFromList,
-     readFirstStorySection,
-     seeOptions,
-     chooseOption,
-     seeCompleteStory
+module.exports = {
+    login,
+    getAllStories,
+    addToList,
+    seeMyList,
+    deleteFromList,
+    readFirstStorySection,
+    readNextSection,
+    seeOptions,
+    chooseOption,
+    seeCompleteStory
 } 
