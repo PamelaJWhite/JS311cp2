@@ -354,14 +354,18 @@ let seeOptions = function(req, res){
             console.error("couldn't get options ", err)
             res.status(500).send("couldn't get options")
         }else{
+            // let optionsArray = rows.map((element) => {
+            //     console.log("in foreach:", element.option_content)
+            //     return element.option_content
+            // })
+            // console.log("optionsArray: ", optionsArray)
+            // res.json(optionsArray)
             
-            let optionsArray = rows.map((element) => {
-                console.log("in foreach:", element.option_content)
-                return element.option_content
-                
-            })
-            console.log("optionsArray: ", optionsArray)
-            res.json(optionsArray)
+            let test = rows.map((element) => {
+                    console.log("in map: ", element)
+                    return element
+                })
+                res.json(test)
         }
     })
 }
