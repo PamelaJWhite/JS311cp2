@@ -42,7 +42,7 @@ router.delete("/myStories/delete/:user_story_id", auth.checkJwt, controllers.del
 router.post("/myStories/readFirst/:user_story_id", auth.checkJwt, controllers.readFirstStorySection)
 
 //POST /myStories/read/:user_story_id/:resulting_story_sectionId
-router.post("/myStories/readNext/:user_story_id/:resulting_story_section_id", auth.checkJwt, controllers.readNextSection)
+router.post("/myStories/readNext/:user_story_id/:resulting_story_section_id/:option_id", auth.checkJwt, controllers.readNextSection)
 
 // POST /myStories/options/:story_sectin_id
 // see all options
