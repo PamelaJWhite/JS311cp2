@@ -178,9 +178,6 @@ let deleteFromList = function(req, res){
 }
 
 // Get the first story section by the story_section_id
-// Right now, it seems I’m leaving it to the front end to figure out how to get the correct story_section_id
-// I think I need a route or an option within an admin route to connect a specific story_section_id from the StorySections table and add a start_story_section_id (that same id) to the 
-// But I have to get something done, so i need to leave this for now
 // Add it to the CompleteStory table
 // The database is getting updated as the user reads the story and makes choices
 // Read the story section
@@ -192,119 +189,73 @@ let readFirstStorySection = function(req, res){
     let userStoryId = req.params.user_story_id;
     console.log("path params had this user_story_id: ", userStoryId)
 
-    //grab the resulting_story_section_id from the query params if it's there
     let resultingStorySection = req.query.resulting_story_section_id
     console.log("query params had this resulting_story_section ", resultingStorySection)
 
-     //if the resulting story section (not the user story id)
-    //was sent in the query params
-    // if(resultingStorySection){
-    //     //do i have access to the path params in here?
-    //     console.log("there is a resulting story section")
-    //     //JOIN sectionoptions and storysections tables
-    //     //on the column resultingstorysection in sectionoptions matches the column storysectionid in storysections
-    //     //select columns: sectionoptions.resulting_story_section, storysections.story_section_id, storysections.story_section_content
-    //     //and i still need the user_story_id to   add to the completestory table
-    //     let sql = 
-    //     `SELECT 
-    //     sectionoptions.resulting_story_section_id,
-    //     storysections.story_section_id,
-    //     storysections.story_section_content
-    //     FROM sectionoptions
-    //     JOIN storysections ON sectionoptions.resulting_story_section_id = storysections.story_section_id
-    //     WHERE resulting_story_section_id = ?`
-        
-    //     db.query(sql, resultingStorySection, function(err, rows){
-    //         if(err){
-    //             console.error("couldn't join sectionoptions and storysections tables", err)
-    //             res.status(500).send("couldn't join sectionoptions and storysections tables")
-    //         }else{
-    //             let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, 0)`
-    //             db.query(sqlCompleteStory, [userStoryId, rows[0].story_section_id], function(err, rows){
-    //                 if(err){
-    //                     console.error("couldn't add those rows to completestory", err)
-    //                     res.status(500).send("couldn't add rows to completestory")
-    //                 }else{
-    //                     console.log("added the row to complete table, now you can read it")
-    //                 }
-    //             })
-    //         //return the section here
-    //         let section =  rows[0].story_section_content
-    //         console.log("read this: ", section)
-    //         }
-    //     } )
-    // } 
-    // //else, the default is that this is the first story section
-    // //and we'll use the userStoryId to get the first story section
-    // //this needs some safeguards - if you screw up the query parameters, this happens
-    // else{
-        //JOINs userstory, stories, and storysections tables
-        //where the start_story section ID equals the story_section_id given in the params
-        //this gets the first story section for a story
-        //that will create the row to insert into CompleteStory
-        let sql = `SELECT 
-	    userstory.user_story_id,
-        stories.story_id, 
-        stories.start_story_section_id,
-        storysections.story_section_id, 
-        storysections.story_section_content
-        FROM userstory
-        JOIN stories ON userstory.story_id = stories.story_id 
-        JOIN storysections ON stories.start_story_section_id = storysections.story_section_id
-        WHERE user_story_id = ?;`
-        db.query(sql, userStoryId, function(err, rows){
-            if(err){
-                console.error("couldn't join those tables", err)
-                res.status(500).send("couldn't join those tables")
-                } else {
-                console.log("rows from join userstory, stories, storysections to read first content: ", rows)
-                //save the user_story_id
-                let userStoryId = rows[0].user_story_id
-                console.log("user story id from the rows to add to completestory: ", userStoryId)
+    let sql = `SELECT 
+    userstory.user_story_id,
+    stories.story_id, 
+    stories.start_story_section_id,
+    storysections.story_section_id, 
+    storysections.story_section_content
+    FROM userstory
+    JOIN stories ON userstory.story_id = stories.story_id 
+    JOIN storysections ON stories.start_story_section_id = storysections.story_section_id
+    WHERE user_story_id = ?;`
+    db.query(sql, userStoryId, function(err, rows){
+        if(err){
+            console.error("couldn't join those tables", err)
+            res.status(500).send("couldn't join those tables")
+            } else {
+            console.log("rows from join userstory, stories, storysections to read first content: ", rows)
+            //save the user_story_id
+            let userStoryId = rows[0].user_story_id
+            console.log("user story id from the rows to add to completestory: ", userStoryId)
 
-                //save the story_section_id 
-                let storySectionId = rows[0].story_section_id
-                console.log("story section id to add to completestory: ", storySectionId)
+            //save the story_section_id 
+            let storySectionId = rows[0].story_section_id
+            console.log("story section id to add to completestory: ", storySectionId)
 
-                //and add it to CompleteStory table 
-                let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
-                db.query(sqlCompleteStory, [userStoryId, storySectionId], function(req, res){
-            if(err){
-                console.error("couldn't insert new completestory row: ", err)
-                res.status(500).send("couldn't insert new complete story row")
-                } 
-                //This should be the FIRST row for this userstory
-                //in the completestory table 
-                //bc it was obtained through the user_story_id
-                //and future rows (pieces of the story) will be obtained through the chosen option
-                //if the user_story_id already exists, that's a problem
-                //I want to account for this with an if statement, but I think that involves another query
-                //of the completestory table
-                //and I need to get the big stuff done, first
-            else {
-                console.log("user_story_id and first story_section inserted into completeStory")
-                }
-            } )
-            // save just the row; take it out of the returned array
-            // and show just the value (i.e., the content)
-            let section =  rows[0]
-                console.log(section)
-                res.json(section)
+            //and add it to CompleteStory table 
+            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
+            db.query(sqlCompleteStory, [userStoryId, storySectionId], function(req, res){
+        if(err){
+            console.error("couldn't insert new completestory row: ", err)
+            res.status(500).send("couldn't insert new complete story row")
+            } 
+            //This should be the FIRST row for this userstory
+            //in the completestory table 
+            //bc it was obtained through the user_story_id
+            //and future rows (pieces of the story) will be obtained through the chosen option
+            //if the user_story_id already exists, that's a problem
+            //I want to account for this with an if statement, but I think that involves another query
+            //of the completestory table
+            //and I need to get the big stuff done, first
+        else {
+            console.log("user_story_id and first story_section inserted into completeStory")
             }
         } )
-    }
+        // save just the row; take it out of the returned array
+        // and show just the value (i.e., the content)
+        let section =  rows[0]
+            console.log(section)
+            res.json(section)
+        }
+    } )
 }
 
 let readNextSection = function(req, res){
     console.log("in readNextSection()")
+
     //grab the user_story_id from path params 
     let userStoryId = req.params.user_story_id;
+    console.log("in readNextSection(); path params had this userStoryId: ", userStoryId)
 
      //grab the resulting_story_section_id from the path params
     let resultingStorySection = req.params.resulting_story_section_id
-    console.log("path params had this resulting_story_section ", resultingStorySection)
+    console.log("in readNextSection(); path params had this resulting_story_section ", resultingStorySection)
 
-    let optionId = req.params.option_id;
+    // let optionId = req.params.option_id;
 
     //JOIN sectionoptions and storysections tables
     //on the column resultingstorysection in sectionoptions matches the column storysectionid in storysections
@@ -325,8 +276,8 @@ let readNextSection = function(req, res){
             res.status(500).send("couldn't join sectionoptions and storysections tables")
             
         }else{
-            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
-            db.query(sqlCompleteStory, [userStoryId, resultingStorySection, optionId], function(err, rows){
+            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id) VALUES (?, ?)`
+            db.query(sqlCompleteStory, [userStoryId, resultingStorySection], function(err, rows){
                 if(err){
                     console.error("couldn't add those rows to completestory", err)
                     res.status(500).send("couldn't add rows to completestory")
@@ -337,6 +288,7 @@ let readNextSection = function(req, res){
         //return the section here
         let section =  rows[0].story_section_content
         console.log("read this: ", section) 
+        res.json(section)
         }
     } )
 }
@@ -402,9 +354,6 @@ let chooseOption = function(req, res){
         
     }
     
-    
-
-
 let seeCompleteStory = function(req, res){
     console.log("user seeCompleteStory()")
 }
@@ -422,3 +371,54 @@ module.exports = {
     chooseOption,
     seeCompleteStory
 } 
+
+  //if the resulting story section (not the user story id)
+    //was sent in the query params
+    // if(resultingStorySection){
+    //     //do i have access to the path params in here?
+    //     console.log("there is a resulting story section")
+    //     //JOIN sectionoptions and storysections tables
+    //     //on the column resultingstorysection in sectionoptions matches the column storysectionid in storysections
+    //     //select columns: sectionoptions.resulting_story_section, storysections.story_section_id, storysections.story_section_content
+    //     //and i still need the user_story_id to   add to the completestory table
+    //     let sql = 
+    //     `SELECT 
+    //     sectionoptions.resulting_story_section_id,
+    //     storysections.story_section_id,
+    //     storysections.story_section_content
+    //     FROM sectionoptions
+    //     JOIN storysections ON sectionoptions.resulting_story_section_id = storysections.story_section_id
+    //     WHERE resulting_story_section_id = ?`
+        
+    //     db.query(sql, resultingStorySection, function(err, rows){
+    //         if(err){
+    //             console.error("couldn't join sectionoptions and storysections tables", err)
+    //             res.status(500).send("couldn't join sectionoptions and storysections tables")
+    //         }else{
+    //             let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, 0)`
+    //             db.query(sqlCompleteStory, [userStoryId, rows[0].story_section_id], function(err, rows){
+    //                 if(err){
+    //                     console.error("couldn't add those rows to completestory", err)
+    //                     res.status(500).send("couldn't add rows to completestory")
+    //                 }else{
+    //                     console.log("added the row to complete table, now you can read it")
+    //                 }
+    //             })
+    //         //return the section here
+    //         let section =  rows[0].story_section_content
+    //         console.log("read this: ", section)
+    //         }
+    //     } )
+    // } 
+    // //else, the default is that this is the first story section
+    // //and we'll use the userStoryId to get the first story section
+    // //this needs some safeguards - if you screw up the query parameters, this happens
+    // else{
+        //JOINs userstory, stories, and storysections tables
+        //where the start_story section ID equals the story_section_id given in the params
+        //this gets the first story section for a story
+        //that will create the row to insert into CompleteStory
+        // }
+
+          // //grab the resulting_story_section_id from the query params if it's there
+   
