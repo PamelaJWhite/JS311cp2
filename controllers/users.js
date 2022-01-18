@@ -286,9 +286,10 @@ let readNextSection = function(req, res){
                 }
             })
         //return the section here
-        let section =  rows[0].story_section_content
-        console.log("read this: ", section) 
-        res.json(section)
+        // let section =  rows[0].story_section_content
+        // console.log("read this: ", section) 
+        // res.json(section)
+        res.json(rows[0])
         }
     } )
 }
