@@ -50,7 +50,7 @@ router.post("/myStories/options/:story_section_id", auth.checkJwt, controllers.s
 
 // POST /myStories/options/user_story_id/:option_id
 //add chosen option to userstory table 
-router.post("/myStories/options/:user_story_id/:option_id", auth.checkJwt, controllers.chooseOption)
+router.post("/myStories/options/:user_story_id/:story_section_id/:option_id", auth.checkJwt, controllers.chooseOption)
 
 // GET /myStories/completeStory/:user_story_id??
 // Grab all the rows in the CompleteStory table

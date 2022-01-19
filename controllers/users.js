@@ -308,18 +308,12 @@ let seeOptions = function(req, res){
             console.error("couldn't get options ", err)
             res.status(500).send("couldn't get options")
         }else{
-            // let optionsArray = rows.map((element) => {
-            //     console.log("in foreach:", element.option_content)
-            //     return element.option_content
-            // })
-            // console.log("optionsArray: ", optionsArray)
-            // res.json(optionsArray)
-            
-            let test = rows.map((element) => {
-                    console.log("in map: ", element)
-                    return element
-                })
-                res.json(test)
+            let optionsArray = rows.map((element) => {
+                console.log("in map", element)
+                return element
+            })
+            console.log("optionsArray: ", optionsArray)
+            res.json(optionsArray)
         }
     })
 }
@@ -329,22 +323,19 @@ let seeOptions = function(req, res){
 let chooseOption = function(req, res){
     console.log("user chooseOption()")
 
-    //grab the userstoryid and option_id from the path paramaters
+    //grab the userstoryid and option_id and storySectionId from the path paramaters
     let userStoryId = req.params.user_story_id
     let optionId = req.params.option_id
+    let storySectionId = req.params.story_section_id
 
-    let nullVariable = null;
+    
     //add the option id to the completestory table 
     //so it matches the user_story_id
-    //and the options_id column is null
-    //only the most recent column should be null
-        //alternatively, I could set up a string in the option_id column
-        //in the readStory function
-        //so that it's more distinct than null
-        //null doesn't work, anyway
+    //and the story_section_id
+    //so the story section and option end up in the same row
     let sqlAddOption = `UPDATE completestory SET options_id = ?
-    WHERE user_story_id = ? AND options_id = 0`
-        db.query(sqlAddOption, [optionId, userStoryId], function(err, rows){
+    WHERE user_story_id = ? AND story_section_id = ?`
+        db.query(sqlAddOption, [optionId, userStoryId, storySectionId], function(err, rows){
             if(err){console.error("couldn't add option to completestory ", err)
                 res.status(500).send("couldn't add option to completestory")
             }else{
