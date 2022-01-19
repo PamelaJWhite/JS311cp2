@@ -217,7 +217,7 @@ let readFirstStorySection = function(req, res){
             console.log("story section id to add to completestory: ", storySectionId)
 
             //and add it to CompleteStory table 
-            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, options_id) VALUES (?, ?, ?)`
+            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id) VALUES (?, ?)`
             db.query(sqlCompleteStory, [userStoryId, storySectionId], function(req, res){
         if(err){
             console.error("couldn't insert new completestory row: ", err)
