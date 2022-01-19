@@ -357,6 +357,24 @@ let chooseOption = function(req, res){
     
 let seeCompleteStory = function(req, res){
     console.log("user seeCompleteStory()")
+
+    let userStoryId = req.params.user_story_id
+
+    let sql = "SELECT completestory.complete_story_id, sectionoptions.option_content, sectionoptions.option_id, storysections.story_section_content,storysections.story_section_id FROM completestory JOIN sectionoptions ON sectionoptions.story_section_id = completestory.story_section_id JOIN storysections ON storysections.story_section_id = completestory.story_section_id WHERE user_story_id = ? ORDER BY completestory.complete_story_id"
+
+    db.query(sql, userStoryId, function(err, rows){
+        if(err){
+            //how would I give a more specific response back
+            //i.e., "You can't delete that title, because you've already started reading that story"?
+            //err is generic - i know it's not allowing the delete because of foreign key constraints
+            //but it could be a different reason for err
+            console.error("couldn't get complete story", err)
+            res.status(500).send("couldn't get complete story")
+        } else {
+            console.log("Here's the complete story: ", rows)
+            res.json(rows)
+        }
+    })
 }
 
  //export controllers
