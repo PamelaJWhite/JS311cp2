@@ -314,6 +314,7 @@ let seeOptions = function(req, res){
             })
             console.log("optionsArray: ", optionsArray)
             res.json(optionsArray)
+
         }
     })
 }
@@ -343,7 +344,6 @@ let chooseOption = function(req, res){
                 res.status(200).send("added option to complete story")
             }
         })
-        
     }
     
 let seeCompleteStory = function(req, res){
