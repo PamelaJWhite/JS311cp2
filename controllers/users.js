@@ -351,7 +351,15 @@ let seeCompleteStory = function(req, res){
 
     let userStoryId = req.params.user_story_id
 
-    let sql = "SELECT completestory.complete_story_id, sectionoptions.option_content, sectionoptions.option_id, storysections.story_section_content,storysections.story_section_id FROM completestory JOIN sectionoptions ON sectionoptions.story_section_id = completestory.story_section_id JOIN storysections ON storysections.story_section_id = completestory.story_section_id WHERE user_story_id = ? ORDER BY completestory.complete_story_id"
+    let sql = `SELECT completestory.complete_story_id, 
+                storysections.story_section_content, 
+                storysections.story_section_id, 
+                sectionoptions.option_content, 
+                sectionoptions.option_id 
+                FROM completestory 
+                JOIN storysections ON storysections.story_section_id = completestory.story_section_id 
+                LEFT JOIN sectionoptions ON sectionoptions.option_id = completestory.options_id 
+                WHERE user_story_id = ?`
 
     db.query(sql, userStoryId, function(err, rows){
         if(err){
