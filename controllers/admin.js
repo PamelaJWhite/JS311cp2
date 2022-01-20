@@ -217,6 +217,7 @@ const createOption = function(req, res){
 
     db.query(sql, [option_content, section_id], function(err, rows) {
             if(err){
+                console.log("option_content: ", option_content)
                 console.error("failed to add option", err)
                 res.status(500).send("failed to add option")
             } else {
@@ -246,8 +247,12 @@ const modifyOption = function(req, res){
 
 const connectOption = function(req, res){
     console.log("in function to connect a resulting story section to an option")
-    let storySection = req.params.section_id
+    
+    //we want this option_id
     let option = req.params.option_id
+    //to lead to this story_section_id
+    let storySection = req.params.resulting_section_id
+
     let sql = `UPDATE sectionoptions SET resulting_story_section_id = ? WHERE option_id = ?`
     db.query(sql, [storySection, option], function(err, rows){
         if(err){

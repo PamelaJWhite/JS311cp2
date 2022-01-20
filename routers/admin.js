@@ -54,7 +54,7 @@ router.put("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin]
 
 //route to link an option to its resulting story section 
 //cannot be done during original creation, because the next story section may not be created yet
-router.put("/stories/:section_id/connectOption/:option_id", [auth.checkJwt, auth.isAdmin], controllers.connectOption)
+router.put("/stories/:option_id/connectOption/:resulting_section_id", [auth.checkJwt, auth.isAdmin], controllers.connectOption)
 
 //route to delete an option (eventually)
 router.delete("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.deleteOption)
