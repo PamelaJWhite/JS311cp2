@@ -183,7 +183,7 @@ let deleteFromList = function(req, res){
 // Read the story section
 let readFirstStorySection = function(req, res){
     //read a story section and add it to the CompleteStory table
-    console.log("user readStorySection()")
+    console.log("user readFirstStorySection()")
 
     //grab the user_story_id from path params 
     let userStoryId = req.params.user_story_id;
@@ -207,7 +207,7 @@ let readFirstStorySection = function(req, res){
             console.error("couldn't join those tables", err)
             res.status(500).send("couldn't join those tables")
             } else {
-            console.log("rows from join userstory, stories, storysections to read first content: ", rows)
+            console.log("rows.length from join userstory, stories, storysections to read first content: ", rows.length)
             //save the user_story_id
             let userStoryId = rows[0].user_story_id
             console.log("user story id from the rows to add to completestory: ", userStoryId)
@@ -351,7 +351,7 @@ let seeCompleteStory = function(req, res){
 
     let userStoryId = req.params.user_story_id
 
-    let sql = `SELECT completestory.complete_story_id, 
+    let sql = `SELECT completestory.complete_story_id,
                 storysections.story_section_content, 
                 storysections.story_section_id, 
                 sectionoptions.option_content, 
@@ -359,7 +359,8 @@ let seeCompleteStory = function(req, res){
                 FROM completestory 
                 JOIN storysections ON storysections.story_section_id = completestory.story_section_id 
                 LEFT JOIN sectionoptions ON sectionoptions.option_id = completestory.options_id 
-                WHERE user_story_id = ?`
+                WHERE user_story_id = ?
+                ORDER BY complete_story_id`
 
     db.query(sql, userStoryId, function(err, rows){
         if(err){
