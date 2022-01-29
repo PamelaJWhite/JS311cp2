@@ -113,10 +113,13 @@ let addToList = function(req, res) {
     let story_id = req.params.story_id
     // and the :user_id
     let user_id = req.params.user_id
-    // use both to create new row in UserStory table
+    //grab the start date from the body
+    let start_date = req.body.start_date
+    // use all three to create new row in UserStory table
     // This will give it a user_story_id, which is a unique instance of one time through reading/ playing the the whole story
-    let sql = `INSERT INTO UserStory(story_id, user_id) values (?,?)`
-    db.query(sql, [story_id, user_id], function(err, rows) {
+    
+    let sql = `INSERT INTO UserStory(story_id, user_id, start_date) values (?,?, ?)`
+    db.query(sql, [story_id, user_id, start_date], function(err, rows) {
         if(err){
             console.error("failed to add story to user list", err)
             res.status(500).send("failed to add story to user list")
