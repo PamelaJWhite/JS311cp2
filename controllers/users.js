@@ -25,8 +25,9 @@ let login = function(req, res){
         //the user needs to prove that the password is good 
         let goodPassword = false
 
-        //instantiating the variable role
+        //instantiating the variable role, userId
         let role;
+        let userId;
 
         //if the db failed then log an error
         if(err){
@@ -58,8 +59,9 @@ let login = function(req, res){
                 //hey bcrypt, can you hash this password to see if it matches the password hash in the db?
             goodPassword = bcrypt.compareSync(password, hash)
 
-            //get the role from the db
+            //get the role, user_id from the db
             role = row.role
+            userId = row.user_id
         }
 
         //if the password provided is good then return a signed copy of the access token
@@ -86,6 +88,7 @@ let login = function(req, res){
             res.json({
                 "username": username, 
                 "role": role, 
+                "userId": userId,
                 "accessToken": accessToken})
 
         }else{
