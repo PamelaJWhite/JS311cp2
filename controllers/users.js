@@ -18,7 +18,7 @@ let login = function(req, res){
     //the first (and in this case, only) argument in the array of arguments following the statement (i.e., username)
     //so that the user input (i.e., username) is not directly put into the sql statement
     //to avoid sql injection
-    db.query("SELECT user_name, password_hash, role FROM Users where user_name = ?", [username], function(err, rows){
+    db.query("SELECT user_name, password_hash, role, user_id FROM Users where user_name = ?", [username], function(err, rows){
         console.log(`inside login() query. username: ${username}`)
         
         //assume the password provided in the request is bad
