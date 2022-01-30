@@ -12,7 +12,10 @@ let auth = require("../middleware/auth")
 controllers = require("../controllers/admin")
 
 //establish routes
-router.post("/createUser", [auth.checkJwt, auth.isAdmin], controllers.createUser)
+// router.post("/createUser", [auth.checkJwt, auth.isAdmin], controllers.createUser)
+//changed route to exclude auth checks so anyone can create a login
+router.post("/createUser", controllers.createUser)
+
 
 
 //------------- STORIES create, update, delete, get stories ----------------------
