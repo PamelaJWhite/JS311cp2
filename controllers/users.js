@@ -83,7 +83,7 @@ let login = function(req, res){
             console.log("Here, have a token: ", accessToken)
             //send the signed token back
             // res.json(accessToken)
-            res.json(role)
+            res.json([username, role, accessToken])
 
         }else{
             res.status(401).send("Unauthorized")
