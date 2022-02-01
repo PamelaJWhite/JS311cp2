@@ -206,6 +206,7 @@ let readFirstStorySection = function(req, res){
     userstory.user_story_id,
     stories.story_id, 
     stories.start_story_section_id,
+    stories.title,
     storysections.story_section_id, 
     storysections.story_section_content
     FROM userstory
@@ -225,10 +226,13 @@ let readFirstStorySection = function(req, res){
             //save the story_section_id 
             let storySectionId = rows[0].story_section_id
             console.log("story section id to add to completestory: ", storySectionId)
+            
+            //save the title
+            let title = rows[0].title
 
             //and add it to CompleteStory table 
-            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id) VALUES (?, ?)`
-            db.query(sqlCompleteStory, [userStoryId, storySectionId], function(req, res){
+            let sqlCompleteStory = `INSERT INTO completestory(user_story_id, story_section_id, title) VALUES (?, ?, ?)`
+            db.query(sqlCompleteStory, [userStoryId, storySectionId, title], function(req, res){
         if(err){
             console.error("couldn't insert new completestory row: ", err)
             res.status(500).send("couldn't insert new complete story row")
@@ -365,7 +369,8 @@ let seeCompleteStory = function(req, res){
                 storysections.story_section_content, 
                 storysections.story_section_id, 
                 sectionoptions.option_content, 
-                sectionoptions.option_id 
+                sectionoptions.option_id,
+                compltestory.title,
                 FROM completestory 
                 JOIN storysections ON storysections.story_section_id = completestory.story_section_id 
                 LEFT JOIN sectionoptions ON sectionoptions.option_id = completestory.options_id 
