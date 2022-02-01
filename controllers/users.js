@@ -150,7 +150,7 @@ let seeMyList = function(req, res) {
     //grab all the titles from the story table and user_ids from the usertable 
     //for all the rows where the story_ids match across tables 
     //and a specific user_id is present
-    let sql = `SELECT userstory.user_story_id, stories.title, stories.story_id, userstory.user_id, userstory.start_date FROM stories INNER JOIN userstory ON stories.story_id = userstory.story_id WHERE user_id = ?` 
+    let sql = `SELECT userstory.user_story_id, stories.title, stories.story_id, userstory.user_id, userstory.start_date FROM stories INNER JOIN userstory ON stories.story_id = userstory.story_id WHERE user_id = ? ORDER BY user_story_id DESC` 
 
     db.query(sql, [user_id], function(err, rows) {
         if(err){
