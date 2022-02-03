@@ -52,8 +52,11 @@ router.delete("/stories/sections/:section_id", [auth.checkJwt, auth.isAdmin], co
 //route to create options for a story section
 router.post("/stories/sections/:section_id/options", [auth.checkJwt, auth.isAdmin], controllers.createOption)
 
-//route to modify an option
-router.put("/stories/sections/options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.modifyOption)
+//route to modify an option content
+router.put("/stories/change_options/:option_id", [auth.checkJwt, auth.isAdmin], controllers.modifyOption)
+
+//route to modify a resulting story section
+router.put("/stories/change_resulting_storysection/:option_id", [auth.checkJwt, auth.isAdmin], controllers.modifyResultingStorySection)
 
 //route to link an option to its resulting story section 
 //cannot be done during original creation, because the next story section may not be created yet
