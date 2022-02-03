@@ -246,10 +246,10 @@ const modifyOption = function(req, res){
 
 const modifyResultingStorySection = function(req, res){
   console.log("in function to update a story option modifyOption()")
-  let resulting_story_section = req.body.resulting_story_section
+  let resulting_story_section_id = req.body.resulting_story_section_id
   let option_id = req.params.option_id
-  let sql = `UPDATE sectionoptions SET resulting_story_section =? WHERE option_id =?;`
-  db.query(sql, [resulting_story_section, option_id], function(err, rows) {
+  let sql = `UPDATE sectionoptions SET resulting_story_section_id =? WHERE option_id =?;`
+  db.query(sql, [resulting_story_section_id, option_id], function(err, rows) {
           if(err){
               console.error("failed to modify resulting story section", err)
               res.status(500).send("failed to modify resulting story section")
